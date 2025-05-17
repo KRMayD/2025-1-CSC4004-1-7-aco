@@ -1,0 +1,45 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 윈도우 단축아이콘, 시스템 파일
+*.lnk
+desktop.ini
+
+# 이미지 및 zip, pdf 등 미디어
+*.jpg
+*.pdf
+*.zip
+
+# 프로그램 폴더
+/my-app/
+/apache-tomcat-10.1.31-windows-x64/
+/Project1/
+/Steam/
+/Webex/
+
+# 기타 경로 (디렉터리 또는 파일명에 따라 맞춤 설정)
+../*
+
+# 깨진 한글 파일 예외 처리 (전체 상위 경로 무시)
+*.lnk
