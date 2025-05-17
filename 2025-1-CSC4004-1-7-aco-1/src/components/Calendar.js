@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const days = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
-const Calendar = ({ selectedDate, onSelectDate, emotionMap }) => {
+const Calendar = ({ selectedDate, onSelectDate, emotionMap, currentMonth, onChangeMonth }) => {
     const today = new Date();
-    const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+    const currentDate = currentMonth || new Date(today.getFullYear(), today.getMonth(), 1);
 
     // 월 변경 함수
     const handlePrevMonth = () => {
-        setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+        if (onChangeMonth) {
+            onChangeMonth(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+        }
     };
     const handleNextMonth = () => {
-        setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+        if (onChangeMonth) {
+            onChangeMonth(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+        }
     };
 
     const year = currentDate.getFullYear();

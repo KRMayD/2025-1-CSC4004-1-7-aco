@@ -16,13 +16,13 @@ const DrawingPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [currentMonth, setCurrentMonth] = useState(new Date());
     const [showTitleModal, setShowTitleModal] = useState(false);
     const [drawingTitle, setDrawingTitle] = useState("");
     const [savedImage, setSavedImage] = useState(null);
     const [showChatModal, setShowChatModal] = useState(false);
     const [drawingRecords, setDrawingRecords] = useState({});
     const [selectedRecord, setSelectedRecord] = useState(null);
-    const penSizes = [2, 4, 8, 12];
 
     const colors = [
         '#000000', // 검정
@@ -33,11 +33,11 @@ const DrawingPage = () => {
         '#FF7626', // 진주황
         '#26A5FF', // 하늘색
         '#13C213', // 초록 (새로 추가)
+        'eraser', // 지우개
     ];
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
         canvas.width = 560;
         canvas.height = 440;
     }, []);
@@ -99,7 +99,7 @@ const DrawingPage = () => {
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
         ctx.moveTo(x, y);
-        ctx.strokeStyle = currentColor;
+        ctx.strokeStyle = currentColor === 'eraser' ? '#FFFFFF' : currentColor;
         ctx.lineWidth = lineWidth;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -111,7 +111,7 @@ const DrawingPage = () => {
         const canvas = isModal ? modalCanvasRef.current : canvasRef.current;
         const { x, y } = getMousePosition(e, canvas);
         const ctx = canvas.getContext('2d');
-        ctx.strokeStyle = currentColor;
+        ctx.strokeStyle = currentColor === 'eraser' ? '#FFFFFF' : currentColor;
         ctx.lineWidth = lineWidth;
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -167,12 +167,17 @@ const DrawingPage = () => {
 
     const handleCalendarClick = (date) => {
         setSelectedDate(date);
+        setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
         const dateKey = format(date, 'yyyy-MM-dd');
         if (drawingRecords[dateKey]) {
             setSelectedRecord(drawingRecords[dateKey]);
         } else {
             setSelectedRecord(null);
         }
+    };
+
+    const handleChangeMonth = (date) => {
+        setCurrentMonth(date);
     };
 
     const openModal = () => {
@@ -216,6 +221,8 @@ const DrawingPage = () => {
                         selectedDate={selectedDate}
                         onSelectDate={handleCalendarClick}
                         tileContent={({ date, view }) => view === 'month' ? renderDayContents(date.getDate(), date) : null}
+                        currentMonth={currentMonth}
+                        onChangeMonth={handleChangeMonth}
                     />
                 </CalendarWrapper>
                 <DrawingArea>
@@ -242,10 +249,12 @@ const DrawingPage = () => {
                             {colors.map((color) => (
                                 <ColorButton
                                     key={color}
-                                    color={color}
                                     active={currentColor === color}
                                     onClick={() => setCurrentColor(color)}
-                                />
+                                    style={color === 'eraser' ? { border: '2px dashed #888', background: '#fff' } : { background: color }}
+                                >
+                                    {color === 'eraser' ? '' : ''}
+                                </ColorButton>
                             ))}
                         </ColorGrid>
                     </ColorPalette>
@@ -275,10 +284,12 @@ const DrawingPage = () => {
                                 {colors.map((color) => (
                                     <ModalColorButton
                                         key={color}
-                                        color={color}
                                         active={currentColor === color}
                                         onClick={() => setCurrentColor(color)}
-                                    />
+                                        style={color === 'eraser' ? { border: '2px dashed #888', background: '#fff' } : { background: color }}
+                                    >
+                                        {color === 'eraser' ? '' : ''}
+                                    </ModalColorButton>
                                 ))}
                             </ModalColorPalette>
                             <ModalCanvas
@@ -384,18 +395,18 @@ const DrawingPage = () => {
 };
 
 const Container = styled.div`
-    width: 1600px;
-    height: 1024px;
-    background: #FFFFFF;
+    width: 100vw;
+    min-height: 100vh;
+    background: transparent;
     position: relative;
     margin: 0 auto;
 `;
 
 const MainContent = styled.main`
-    width: 1600px;
+    width: 100vw;
+    min-height: calc(100vh - 120px);
     margin: 0 auto;
     margin-top: 120px;
-    margin-left: 0;
     display: flex;
     gap: 60px;
     justify-content: center;
@@ -417,7 +428,7 @@ const DrawingArea = styled.div`
     position: relative;
     width: 700px;
     height: 550px;
-    background: #D5E9F9;
+    background: rgba(213, 233, 249, 0.85);
     border-radius: 25px;
     padding: 15px;
     display: flex;

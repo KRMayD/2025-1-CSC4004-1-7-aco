@@ -171,7 +171,7 @@ function DiaryEditor({
         onChange={e => onChange({ ...value, text: e.target.value })}
         readOnly={!isToday}
       />
-      {showDelete && (
+      {showDelete && isToday && (
         <ButtonGroup>
           <ActionButton className="delete" onClick={onDelete}>
             삭제하기

@@ -43,7 +43,7 @@ const MainContent = styled.main`
     margin: 0 auto;
     margin-top: 120px;
     display: flex;
-    gap: 120px;
+    gap: 60px;
     justify-content: center;
     align-items: flex-start;
 `;
@@ -60,6 +60,7 @@ const TimerWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin-bottom: 32px;
+  margin-top: 100px;
 `;
 
 const TimerCircle = styled.div`
@@ -118,6 +119,9 @@ const RightSection = styled.div`
   align-items: flex-start;
   max-height: 520px;
   overflow-y: auto;
+  position: relative;
+  left: -300px;
+  top:50px;
 `;
 
 const MusicListTitle = styled.div`

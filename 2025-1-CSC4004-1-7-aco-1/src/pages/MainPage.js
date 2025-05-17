@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Navigation from "../components/Navigation";
 import Calendar from "../components/Calendar";
 import DiaryEditor from "../components/DiaryEditor";
@@ -9,12 +9,12 @@ import styled from "styled-components";
 
 const MainContent = styled.main`
     width: 100vw;
-    max-width: 1600px;
+    max-width: 1400px;
     min-height: 100vh;
     margin: 0 auto;
     margin-top: 120px;
     display: flex;
-    gap: 120px;
+    gap: 100px;
     justify-content: center;
     align-items: flex-start;
 `;
@@ -111,9 +111,9 @@ function getKSTDateKey(date) {
 }
 
 export default function MainPage() {
-    // 오늘 날짜로 초기화
     const today = new Date();
     const [selectedDate, setSelectedDate] = useState(today);
+    const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
     const [diaryMap, setDiaryMap] = useState({});
     const [emotionMap, setEmotionMap] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,6 +146,21 @@ export default function MainPage() {
             ...prev,
             [dateKey]: value,
         }));
+        // 자동 저장 시 사용자에게 알림
+        const saveNotification = document.createElement('div');
+        saveNotification.textContent = '자동 저장됨';
+        saveNotification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            z-index: 1000;
+        `;
+        document.body.appendChild(saveNotification);
+        setTimeout(() => saveNotification.remove(), 2000);
     };
 
     // 일기 삭제
@@ -198,12 +213,16 @@ export default function MainPage() {
     // 달력 날짜 클릭 시 해당 날짜 일기 불러오기
     const handleSelectDate = (date) => {
         setSelectedDate(date);
+        setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+    };
+
+    // 월 변경 핸들러
+    const handleChangeMonth = (date) => {
+        setCurrentMonth(date);
     };
 
     const handleSaveDiary = () => {
         if (!isTodaySelected) return;
-        // 이미 handleDiaryChange에서 저장되고 있으니, 별도 저장 로직이 필요하다면 여기에 추가
-        // 예시: alert('저장되었습니다!');
         alert('저장되었습니다!');
     };
 
@@ -216,6 +235,8 @@ export default function MainPage() {
                         selectedDate={selectedDate}
                         onSelectDate={handleSelectDate}
                         emotionMap={emotionMap}
+                        currentMonth={currentMonth}
+                        onChangeMonth={handleChangeMonth}
                     />
                 </CalendarWrapper>
                 <DiaryArea>
